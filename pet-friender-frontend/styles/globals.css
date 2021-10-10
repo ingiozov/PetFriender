@@ -31,6 +31,7 @@ li {
 
 .btn {
   display: inline-block;
+  width: 200px;
   background: #f78154;
   color: #fff;
   padding: 10px 20px;
