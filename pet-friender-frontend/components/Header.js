@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Search from './Search'
 import styles from '../styles/Header.module.css'
 
 export default function Header() {
@@ -8,7 +9,7 @@ export default function Header() {
         <ul>
           <li>
             <Link href="/">
-              <a className={styles.logo}>PetFriends</a>
+              <a className={styles.logo}>PetFriender</a>
             </Link>
           </li>
           <li>
@@ -23,12 +24,17 @@ export default function Header() {
           </li>
         </ul>
 
+        <Search />
+
         <ul>
           <li>
             <Link href="/login">Log In</Link>
           </li>
           <li>
             <Link href="/register">Sign Up</Link>
+          </li>
+          <li>
+            <Link href="/dogs/add">Add dog</Link>
           </li>
         </ul>
       </nav>

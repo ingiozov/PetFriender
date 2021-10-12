@@ -1,4 +1,7 @@
+import Image from 'next/image'
 import Layout from '../components/Layout'
+import PetCard from '../components/PetCard'
+import PetCards from '../components/PetCards'
 import { API_URL } from '../config'
 
 export default function HomePage({ dogs }) {
@@ -6,9 +9,14 @@ export default function HomePage({ dogs }) {
   return (
     <Layout>
       <h1>Pets Available for Adoption Nearby</h1>
-      {dogs.map((dog) => (
-        <h2>{dog.name}</h2>
-      ))}
+
+      {dogs.length === 0 && <h3>No dogs to show</h3>}
+
+      <PetCards>
+        {dogs.map((dog) => (
+          <PetCard key={dog.id} pet={dog} />
+        ))}
+      </PetCards>
     </Layout>
   )
 }
