@@ -45,10 +45,21 @@ li {
   background: #944b2f;
 }
 
-/* 
 p {
   margin: 10px 0;
 }
+
+/* .image {
+  position: relative;
+  height: 200px;
+  width: 200px;
+  margin-bottom: 10px;
+  border-radius: 2px;
+  overflow: hidden;
+} */
+
+/* 
+
 
 h1 {
   margin-bottom: 20px;

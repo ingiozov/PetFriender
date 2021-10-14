@@ -10,6 +10,14 @@
     },
     {
       "method": "GET",
+      "path": "/dogs/me",
+      "handler": "dogs.me",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
       "path": "/dogs/count",
       "handler": "dogs.count",
       "config": {

@@ -46,8 +46,6 @@ export async function getServerSideProps({ query: { term } }) {
   const res = await fetch(`${API_URL}/dogs?${query}}`)
   const dogs = await res.json()
 
-  console.log(dogs)
-
   return {
     props: {
       dogs,

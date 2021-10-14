@@ -1,25 +1,35 @@
-import { parseCookies } from '../../helpers'
+import { parseCookies } from '../../../helpers'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import Layout from '../../components/Layout'
-import { API_URL } from '../../config/index'
-import styles from '../../styles/Form.module.css'
+import Image from 'next/image'
+import { Button, Icon } from 'semantic-ui-react'
+import Layout from '../../../components/Layout'
+import Modal from '../../../components/Modal'
+import ImageUpload from '../../../components/ImageUpload'
+import { API_URL } from '../../../config/index'
+import styles from '../../../styles/Form.module.css'
 
-export default function AddDogPage({ token }) {
+export default function EditDogPage({ dog, token }) {
   const [values, setValues] = useState({
-    name: '',
-    age: '',
-    breed: '',
-    color: '',
-    description: '',
-    gender: '',
-    health: '',
-    location: '',
-    size: '',
+    name: dog.name,
+    age: dog.age,
+    breed: dog.breed,
+    color: dog.color,
+    description: dog.description,
+    gender: dog.gender,
+    health: dog.health,
+    location: dog.location,
+    size: dog.size,
   })
+
+  const [imagePreview, setImagePreview] = useState(
+    dog.image ? dog.image.formats.thumbnail.url : null
+  )
+
+  const [showModal, setShowModal] = useState(false)
 
   const router = useRouter()
 
@@ -35,8 +45,8 @@ export default function AddDogPage({ token }) {
       toast.error('Please fill in all fields')
     }
 
-    const res = await fetch(`${API_URL}/dogs`, {
-      method: 'POST',
+    const res = await fetch(`${API_URL}/dogs/${dog.id}`, {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -46,7 +56,7 @@ export default function AddDogPage({ token }) {
 
     if (!res.ok) {
       if (res.status === 403 || res.status === 401) {
-        toast.error('No token included')
+        toast.error('Unauthorized')
         return
       }
       toast.error('Something went wrong')
@@ -68,10 +78,17 @@ export default function AddDogPage({ token }) {
     { key: 'o', text: 'Other', value: 'other' },
   ]
 
+  const imageUploaded = async (e) => {
+    const res = await fetch(`${API_URL}/dogs/${dog.id}`)
+    const data = await res.json()
+    setImagePreview(data.image.formats.thumbnail.url)
+    setShowModal(false)
+  }
+
   return (
-    <Layout title="Add dog">
+    <Layout title="Edit dog">
       <Link href="/dogs">Go Back</Link>
-      <h1>Add dog</h1>
+      <h1>Edit dog</h1>
       <ToastContainer />
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.grid}>
@@ -170,18 +187,45 @@ export default function AddDogPage({ token }) {
           ></textarea>
         </div>
 
-        <input type="submit" value="Add dog" className="btn" />
+        <input type="submit" value="Update dog" className="btn" />
       </form>
+
+      <h2>Dog Image</h2>
+
+      {imagePreview ? (
+        <div>
+          <Image src={imagePreview} width={250} height={250} />
+        </div>
+      ) : (
+        <div>
+          <p>No Image Uploaded</p>
+        </div>
+      )}
+
+      <div>
+        <Button onClick={() => setShowModal(true)}>
+          <Icon name="file image" /> Set Image
+        </Button>
+      </div>
+
+      <Modal show={showModal} onClose={() => setShowModal(false)}>
+        <ImageUpload
+          petId={dog.id}
+          imageUploaded={imageUploaded}
+          token={token}
+        />
+      </Modal>
     </Layout>
   )
 }
 
-export async function getServerSideProps({ req }) {
+export async function getServerSideProps({ params: { id }, req }) {
   const { token } = parseCookies(req)
 
+  const res = await fetch(`${API_URL}/dogs/${id}`)
+  const dog = await res.json()
+
   return {
-    props: {
-      token,
-    },
+    props: { dog, token },
   }
 }
